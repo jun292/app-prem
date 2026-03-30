@@ -73,10 +73,10 @@ app.post('/api/auth/register', registerLimiter, async (req, res) => {
         if (password.length < 6) throw new Error("Password minimal 6 karakter.");
         
         // Jika kamu ingin memverifikasi reCAPTCHA ke Server Google (Opsional tapi sangat disarankan)
-        // const verifyRecaptcha = await axios.post(`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`);
-        // if (!verifyRecaptcha.data.success) throw new Error("Verifikasi reCAPTCHA gagal, bot terdeteksi.");
+         const verifyRecaptcha = await axios.post(`https://www.google.com/recaptcha/api/siteverify?secret=${process.env.RECAPTCHA_SECRET_KEY}&response=${recaptchaToken}`);
+         if (!verifyRecaptcha.data.success) throw new Error("Verifikasi reCAPTCHA gagal, bot terdeteksi.");
 
-        // Cek Email Spesifik
+         Cek Email Spesifik
         const existEmail = await User.findOne({ email: email.toLowerCase() });
         if (existEmail) throw new Error("Email ini sudah terdaftar. Silakan gunakan email lain.");
 

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Daftar Akun | ACCPREM</title>
+    
+    <meta name="description" content="Daftar dan buat akun ACCPREM untuk menikmati layanan aplikasi premium murah, instan, dan legal.">
+    <link rel="icon" type="image/png" href="http://upload-image-ten.vercel.app/78e7d6.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    
+    <script src="https://www.google.com/recaptcha/api.js" async defer></script>
+    
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background-color: #f9fafb; color: #0f172a; min-height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center; -webkit-font-smoothing: antialiased; position: relative; overflow-x: hidden; }
+        
+        /* Background Dinamis Senada dengan BuyApp */
+        .bg-accent { position: absolute; top: 0; left: 0; right: 0; height: 400px; background: linear-gradient(180deg, #f3e8ff 0%, rgba(255,255,255,0) 100%); z-index: -1; pointer-events: none; }
+        
+        /* Box Form Registrasi */
+        .auth-box { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(20px); border: 1px solid #f1f5f9; border-radius: 32px; width: 100%; max-width: 420px; padding: 2.5rem 2rem; box-shadow: 0 25px 50px -12px rgba(147, 51, 234, 0.05); position: relative; animation: fadeUp 0.6s ease-out forwards; z-index: 10; }
+        
+        .custom-input { width: 100%; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 16px; padding: 0.85rem 1.2rem; color: #1e293b; outline: none; transition: all 0.3s ease; font-size: 0.9rem; font-weight: 500; }
+        .custom-input:focus { border-color: #a855f7; box-shadow: 0 0 0 4px rgba(168, 85, 247, 0.1); background: white; }
+        .custom-input::placeholder { color: #94a3b8; font-weight: 400; }
+
+        .btn-primary { width: 100%; background: linear-gradient(135deg, #9333ea 0%, #a855f7 100%); color: white; font-weight: 700; padding: 1rem; border-radius: 16px; transition: 0.3s; box-shadow: 0 10px 25px -5px rgba(147, 51, 234, 0.3); display: flex; justify-content: center; align-items: center; gap: 8px; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 15px 35px -5px rgba(147, 51, 234, 0.4); }
+        .btn-primary:disabled { opacity: 0.7; cursor: not-allowed; transform: none; }
+
+        /* Custom Alert Modals */
+        .modal-overlay { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(6px); display: none; align-items: center; justify-content: center; z-index: 9999; padding: 1rem; opacity: 0; transition: opacity 0.3s; }
+        .modal-overlay.active { display: flex; opacity: 1; }
+        .modal-card { background: white; border: 1px solid #e2e8f0; border-radius: 28px; padding: 2rem; width: 100%; max-width: 380px; text-align: center; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); transform: scale(0.9); transition: transform 0.3s cubic-bezier(0.2, 0, 0, 1); }
+        .modal-overlay.active .modal-card { transform: scale(1); }
+
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body class="p-4 sm:p-0">
+
+    <div class="bg-accent"></div>
+
+    <div class="auth-box">
+        <div class="text-center mb-8">
+            <img src="http://upload-image-ten.vercel.app/78e7d6.png" alt="Logo" class="w-14 h-14 mx-auto rounded-2xl shadow-sm mb-4 border border-slate-100">
+            <h1 class="text-2xl font-extrabold text-slate-800 tracking-tight">Daftar Akun Baru</h1>
+            <p class="text-sm text-slate-500 mt-1">Gabung sekarang dan nikmati layanan kami.</p>
+        </div>
+
+        <form id="registerForm" onsubmit="processRegister(event)" class="space-y-4">
+            
+            <div>
+                <input type="text" id="regUsername" class="custom-input" placeholder="Username (Tanpa spasi)" required pattern="^\S+$" title="Username tidak boleh menggunakan spasi">
+            </div>
+            
+            <div>
+                <input type="email" id="regEmail" class="custom-input" placeholder="Alamat Email Aktif" required>
+            </div>
+            
+            <div>
+                <input type="password" id="regPassword" class="custom-input" placeholder="Buat Kata Sandi (Min. 6 Karakter)" required minlength="6">
+            </div>
+            
+            <div>
+                <input type="password" id="regConfirmPassword" class="custom-input" placeholder="Ulangi Kata Sandi" required minlength="6">
+            </div>
+
+            <div class="flex justify-center my-2">
+                <div class="g-recaptcha" data-sitekey=6LdpU54sAAAAAMvYAHoe52RP9LJ5340esKrwaNu0"></div>
+            </div>
+
+            <button type="submit" class="btn-primary mt-2" id="btnRegister">
+                Daftar Sekarang <i class="fas fa-arrow-right text-sm"></i>
+            </button>
+
+        </form>
+
+        <p class="text-center text-[13px] text-slate-400 mt-6 font-medium">
+            Sudah punya akun? <a href="/login" class="text-purple-600 hover:text-purple-800 font-bold transition-colors">Masuk disini</a>
+        </p>
+    </div>
+
+    <div id="customAlert" class="modal-overlay">
+        <div class="modal-card">
+            <div id="alertIcon" class="w-16 h-16 rounded-full mx-auto flex items-center justify-center text-3xl mb-4"></div>
+            <h3 id="alertTitle" class="text-xl font-bold text-slate-800 mb-2">Title</h3>
+            <p id="alertMessage" class="text-sm text-slate-500 mb-6 leading-relaxed">Message</p>
+            <div id="alertActions">
+                <button onclick="closeAlert()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl transition text-sm shadow-lg shadow-slate-900/20">Mengerti</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ================= CUSTOM ALERT SYSTEM =================
+        function showAlert(type, title, message, isRedirect = false) {
+            const overlay = document.getElementById('customAlert');
+            const icon = document.getElementById('alertIcon');
+            const actions = document.getElementById('alertActions');
+            
+            document.getElementById('alertTitle').innerText = title;
+            document.getElementById('alertMessage').innerText = message;
+
+            if(type === 'success') {
+                icon.className = "w-16 h-16 rounded-full mx-auto flex items-center justify-center text-3xl mb-4 bg-emerald-50 text-emerald-500 border border-emerald-100";
+                icon.innerHTML = '<i class="fas fa-check"></i>';
+            } else if(type === 'error') {
+                icon.className = "w-16 h-16 rounded-full mx-auto flex items-center justify-center text-3xl mb-4 bg-red-50 text-red-500 border border-red-100";
+                icon.innerHTML = '<i class="fas fa-times"></i>';
+            } else {
+                icon.className = "w-16 h-16 rounded-full mx-auto flex items-center justify-center text-3xl mb-4 bg-purple-50 text-purple-500 border border-purple-100";
+                icon.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+            }
+
+            if (isRedirect || type === 'loading') {
+                actions.innerHTML = ''; // Hilangkan tombol saat loading / redirect
+            } else {
+                actions.innerHTML = `<button onclick="closeAlert()" class="w-full bg-slate-900 hover:bg-slate-800 text-white font-bold py-3.5 rounded-xl transition text-sm shadow-lg shadow-slate-900/20">Tutup</button>`;
+            }
+
+            overlay.classList.add('active');
+        }
+
+        function closeAlert() {
+            document.getElementById('customAlert').classList.remove('active');
+        }
+
+        // ================= FUNGSI REGISTRASI =================
+        async function processRegister(e) {
+            e.preventDefault();
+
+            const username = document.getElementById('regUsername').value.trim();
+            const email = document.getElementById('regEmail').value.trim();
+            const password = document.getElementById('regPassword').value;
+            const confirmPassword = document.getElementById('regConfirmPassword').value;
+            
+            // 1. Validasi Password
+            if (password.length < 6) {
+                return showAlert('error', 'Password Terlalu Pendek', 'Kata sandi wajib memiliki minimal 6 karakter demi keamanan akunmu.');
+            }
+
+            if (password !== confirmPassword) {
+                return showAlert('error', 'Password Tidak Sama', 'Konfirmasi kata sandi tidak cocok. Silakan ketik ulang dengan benar.');
+            }
+
+            // 2. Validasi reCAPTCHA
+            const recaptchaResponse = grecaptcha.getResponse();
+            if (recaptchaResponse.length === 0) {
+                return showAlert('error', 'Verifikasi Gagal', 'Silakan centang kotak "I\'m not a robot" (reCAPTCHA) terlebih dahulu untuk melanjutkan.');
+            }
+
+            // UI Loading
+            const btn = document.getElementById('btnRegister');
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Memproses...';
+            btn.disabled = true;
+            showAlert('loading', 'Membuat Akun', 'Mohon tunggu, sistem sedang memverifikasi dan mendaftarkan data kamu secara aman.');
+
+            const payload = {
+                username: username,
+                email: email,
+                password: password,
+                recaptchaToken: recaptchaResponse
+            };
+
+            try {
+                // Tembak API Backend
+                const res = await axios.post('/api/auth/register', payload);
+                
+                if(res.data.success) {
+                    // Berhasil: Popup Keren lalu Redirect
+                    showAlert('success', 'Pendaftaran Sukses!', 'Selamat, akun kamu berhasil dibuat. Mengarahkan ke halaman masuk...', true);
+                    setTimeout(() => {
+                        window.location.href = '/login';
+                    }, 2500); // Redirect setelah 2.5 detik
+                }
+            } catch (err) {
+                // Tangkap pesan spesifik dari Backend (Username sama / Email sama)
+                const errorMsg = err.response?.data?.message || 'Gagal mendaftar. Silakan coba beberapa saat lagi.';
+                showAlert('error', 'Pendaftaran Gagal', errorMsg);
+                
+                // Reset reCAPTCHA jika gagal agar bisa coba lagi
+                grecaptcha.reset();
+            } finally {
+                btn.innerHTML = 'Daftar Sekarang <i class="fas fa-arrow-right text-sm"></i>';
+                btn.disabled = false;
+            }
+        }
+    </script>
+</body>
+</html>
